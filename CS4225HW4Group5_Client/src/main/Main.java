@@ -9,7 +9,7 @@ import network.MatrixClient;
 
 public class Main {
 
-	public static final int MAX_MATRIX_SIZE = 10;
+	public static final int MAX_MATRIX_SIZE = 100;
 
 	public static void main(String[] args) throws IOException {
 		
