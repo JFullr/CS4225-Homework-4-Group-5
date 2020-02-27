@@ -32,9 +32,31 @@ public class Matrix {
 			return null;
 		}
 		
-		Matrix eval = new Matrix(b.getWidth(), this.getHeight());
+		Matrix eval = new Matrix(this.getHeight(),b.getWidth());
 		
-		return null;
+		
+		
+		for(int row = 0; row < this.getHeight(); row++) {
+			
+			for(int col = 0; col < b.getWidth(); col++) {
+			
+				double value = 0;
+					
+				for(int i = 0; i < b.getHeight(); i++) {
+					
+					value+= this.getValue(row, i)*b.getValue(i,col);
+					
+				}
+			
+				eval.setValue(row,col, value);
+			
+			}
+			
+		}
+		
+		
+		
+		return eval;
 	}
 	
 	public int getWidth() {
@@ -43,6 +65,14 @@ public class Matrix {
 	
 	public int getHeight() {
 		return this.matrix == null? -1 : this.matrix.length;
+	}
+	
+	public double getValue(int y, int x) {
+		return this.matrix[y][x];
+	}
+	
+	public void setValue(int y, int x, double value) {
+		this.matrix[y][x] = value;
 	}
 	
 	public String stringify() {
