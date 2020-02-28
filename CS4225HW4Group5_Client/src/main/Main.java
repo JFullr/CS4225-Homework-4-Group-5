@@ -16,7 +16,7 @@ import network.MatrixEval;
  */
 public class Main {
 
-	public static final int MAX_MATRIX_SIZE = 5;
+	public static final int MAX_MATRIX_SIZE = 150;
 
 	/**
 	 * The main method.
@@ -32,10 +32,12 @@ public class Main {
 		
 		if(result != null) {
 		
-			
+			if(result.getMatrix() != null) {
+				System.out.println(result.getMatrix().stringify());
+			}
 			System.out.println(result.getError());
 			System.out.println(result.getTimeMilliseconds());
-			System.out.println(result.getMatrix().stringify());
+			
 		}
 		
 		///TODO file handling and printing
@@ -51,7 +53,7 @@ public class Main {
 		int width2 = rand.nextInt(MAX_MATRIX_SIZE) + 1;
 
 		Matrix matrixA = new Matrix(height, width);
-		Matrix matrixB = new Matrix(width, height);
+		Matrix matrixB = new Matrix(width, width2);
 
 		for (int y = 0; y < matrixA.getHeight(); y++) {
 			for (int x = 0; x < matrixA.getWidth(); x++) {

@@ -16,6 +16,9 @@ import utils.FileUtils;
 public class Matrix implements Serializable {
 
 	private static final long serialVersionUID = 1955136018662799383L;
+	private static final IllegalArgumentException ERROR_INVALID_MATRIX = new IllegalArgumentException(
+			"Matrix Specified Had Missing Data Or Was Imbalanced");
+
 	private double[][] matrix;
 
 	/**
@@ -61,7 +64,7 @@ public class Matrix implements Serializable {
 	 */
 	public Matrix multiply(Matrix matrixB) {
 
-		if (matrixB.getHeight() == -1 || matrixB.getWidth() != this.getHeight()) {
+		if (matrixB.getHeight() != this.getWidth()) {
 			return null;
 		}
 
@@ -160,6 +163,11 @@ public class Matrix implements Serializable {
 		return build.toString();
 	}
 
+	/**
+	 * Read from file.
+	 *
+	 * @param filePath the file path
+	 */
 	private void readFromFile(String filePath) {
 		try {
 
@@ -172,6 +180,11 @@ public class Matrix implements Serializable {
 		}
 	}
 
+	/**
+	 * Read from string.
+	 *
+	 * @param rawMatrix the raw matrix
+	 */
 	private void readFromString(String rawMatrix) {
 
 		rawMatrix = FileUtils.condenseNewLines(rawMatrix);
@@ -182,7 +195,13 @@ public class Matrix implements Serializable {
 
 	}
 
-	private void generateMatrix(String[] csvValues) {
+	/**
+	 * Generate matrix.
+	 *
+	 * @param csvValues the csv values
+	 * @throws IllegalArgumentException the illegal argument exception
+	 */
+	private void generateMatrix(String[] csvValues) throws IllegalArgumentException {
 
 		String[] pieces = csvValues[0].substring(csvValues[0].indexOf(":") + 1).toLowerCase().split("x");
 
@@ -192,8 +211,7 @@ public class Matrix implements Serializable {
 		this.matrix = new double[height][width];
 
 		if ((csvValues.length - 1) % width != 0) {
-			/// TODO error sparse data maybe handle case
-			return;
+			throw ERROR_INVALID_MATRIX;
 		}
 
 		for (int y = 0; y < height; y++) {

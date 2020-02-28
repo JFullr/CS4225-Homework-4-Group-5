@@ -64,7 +64,7 @@ public class Matrix implements Serializable {
 	 */
 	public Matrix multiply(Matrix matrixB) {
 
-		if (matrixB.getHeight() == -1 || matrixB.getWidth() != this.getHeight()) {
+		if (matrixB.getHeight() != this.getWidth()) {
 			return null;
 		}
 
