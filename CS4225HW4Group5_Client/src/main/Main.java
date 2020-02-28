@@ -6,6 +6,7 @@ import java.util.Random;
 
 import matrix.Matrix;
 import network.MatrixClient;
+import network.MatrixEval;
 
 /**
  * The Class Main.
@@ -15,7 +16,7 @@ import network.MatrixClient;
  */
 public class Main {
 
-	public static final int MAX_MATRIX_SIZE = 100;
+	public static final int MAX_MATRIX_SIZE = 5;
 
 	/**
 	 * The main method.
@@ -27,7 +28,15 @@ public class Main {
 		
 		Matrix[] toMultiply = Main.randomMultipliableMatricies();
 		MatrixClient multiplier = new MatrixClient(new File("config.ini"));
-		Matrix result = multiplier.multiplyMatrices(toMultiply);
+		MatrixEval result = multiplier.multiplyMatrices(toMultiply);
+		
+		if(result != null) {
+		
+			
+			System.out.println(result.getError());
+			System.out.println(result.getTimeMilliseconds());
+			System.out.println(result.getMatrix().stringify());
+		}
 		
 		///TODO file handling and printing
 
@@ -39,10 +48,10 @@ public class Main {
 
 		int height = rand.nextInt(MAX_MATRIX_SIZE) + 1;
 		int width = rand.nextInt(MAX_MATRIX_SIZE) + 1;
-		int height2 = rand.nextInt(MAX_MATRIX_SIZE) + 1;
+		int width2 = rand.nextInt(MAX_MATRIX_SIZE) + 1;
 
 		Matrix matrixA = new Matrix(height, width);
-		Matrix matrixB = new Matrix(height2, height);
+		Matrix matrixB = new Matrix(width, height);
 
 		for (int y = 0; y < matrixA.getHeight(); y++) {
 			for (int x = 0; x < matrixA.getWidth(); x++) {

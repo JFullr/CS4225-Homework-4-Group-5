@@ -2,6 +2,7 @@ package network;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayDeque;
@@ -20,7 +21,8 @@ public class MatrixServer {
 
 	private static final String FILE_PORT_KEY = "port";
 	private static final Object REQUESTS_LOCK = new Object();
-	private Queue<MatrixRequest> requests;
+	
+	private volatile Queue<MatrixRequest> requests;
 	private int port;
 	private ServerSocket server;
 
@@ -28,9 +30,10 @@ public class MatrixServer {
 	 * Instantiates a new matrix server.
 	 *
 	 * @param initFile the init file
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IOException Signals that an I/O exception has occurred on file read failure.
 	 */
 	public MatrixServer(File initFile) throws IOException {
+		
 		String[] data = FileUtils.readLines(initFile.getPath());
 		for (String line : data) {
 			if (line.toLowerCase().startsWith(FILE_PORT_KEY)) {
@@ -40,25 +43,30 @@ public class MatrixServer {
 			}
 		}
 
-		this.initServer();
 	}
 
 	/**
 	 * Instantiates a new matrix server.
 	 *
 	 * @param port the port
-	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public MatrixServer(int port) throws IOException {
+	public MatrixServer(int port){
 		this.port = port;
-		this.initServer();
 	}
 
-	private void initServer() throws IOException {
+	/**
+	 * Starts the matrix server
+	 *
+	 * @param port the port
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public void startServer() throws IOException {
+		
 		this.server = new ServerSocket(this.port);
 		this.requests = new ArrayDeque<MatrixRequest>();
 		this.requestsReaderThread();
 		this.requestsProcesserThread();
+		
 	}
 
 	private void requestsReaderThread() {
@@ -84,9 +92,19 @@ public class MatrixServer {
 			while (true) {
 				MatrixRequest process = null;
 				synchronized (REQUESTS_LOCK) {
+					while(this.requests.isEmpty()) {
+						try {
+							REQUESTS_LOCK.wait();
+						} catch (InterruptedException e) {e.printStackTrace();}
+					}
 					process = this.requests.remove();
 				}
-				process.processToClient();
+				try {
+					System.out.println("GOT REQUEST");
+					process.processToClient();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}).start();
 	}
@@ -95,18 +113,17 @@ public class MatrixServer {
 		new Thread(() -> {
 
 			try {
-				/// TODO write to client, and wait for matrix data
-				client.getOutputStream();
+				
+				ObjectInputStream incoming = new ObjectInputStream(client.getInputStream());
 
-				/// TODO read data, and then process into matricies
-
-				Matrix[] deserialized = null;
+				Matrix[] deserialized = (Matrix[])incoming.readObject();
 
 				synchronized (REQUESTS_LOCK) {
 					this.requests.add(new MatrixRequest(client, deserialized));
+					REQUESTS_LOCK.notifyAll();
 				}
 
-			} catch (IOException e) {
+			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}).start();

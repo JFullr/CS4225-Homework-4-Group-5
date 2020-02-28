@@ -1,5 +1,7 @@
 package network;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import matrix.Matrix;
@@ -28,12 +30,16 @@ public class MatrixRequest {
 
 	/**
 	 * Process to client.
+	 * @throws IOException 
 	 */
-	public void processToClient() {
-		MatrixEval eval = new MatrixEval(this.matrixes);
-
-		/// TODO send to client
-
+	public void processToClient() throws IOException {
+		
+		MatrixEval evaluated = new MatrixEval(this.matrixes);
+		
+		ObjectOutputStream write = new ObjectOutputStream(this.client.getOutputStream());
+		write.writeObject(evaluated);
+		write.flush();
+		
 	}
 
 }

@@ -2,6 +2,8 @@ package network;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import matrix.Matrix;
@@ -17,7 +19,7 @@ public class MatrixClient {
 
 	private static final String FILE_IP_KEY = "server-ip";
 	private static final String FILE_PORT_KEY = "port";
-	private static final int SOCKET_TIMEOUT_SECONDS = 3;
+	private static final int SOCKET_TIMEOUT_SECONDS = 30;
 
 	private String address;
 	private int port;
@@ -60,7 +62,7 @@ public class MatrixClient {
 	 * @param matrices the matrixes
 	 * @return the matrix
 	 */
-	public Matrix multiplyMatrices(Matrix... matrices) {
+	public MatrixEval multiplyMatrices(Matrix... matrixes) {
 
 		if (this.client == null) {
 			this.client = this.createClient();
@@ -69,18 +71,24 @@ public class MatrixClient {
 			}
 		}
 
-		Matrix evaluated = this.requestServer(matrices);
+		MatrixEval evaluated = null;
+		try {
+			
+			ObjectOutputStream write = new ObjectOutputStream(this.client.getOutputStream());
+			write.writeObject(matrixes);
+			write.flush();
+			
+			ObjectInputStream response = new ObjectInputStream(this.client.getInputStream());
+			evaluated = (MatrixEval) response.readObject();
+			///TODO add special error handler messages
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 
 		return evaluated;
 
-	}
-
-	private Matrix requestServer(Matrix... matrixes) {
-		return this.waitResponse();
-	}
-
-	private Matrix waitResponse() {
-		return null;
 	}
 
 	private Socket createClient() {
@@ -88,7 +96,9 @@ public class MatrixClient {
 		Socket client = null;
 		try {
 			client = new Socket(this.address, this.port);
-			client.setSoTimeout(SOCKET_TIMEOUT_SECONDS);
+			client.setTcpNoDelay(true);
+			//client.set
+			//client.setSoTimeout(SOCKET_TIMEOUT_SECONDS);
 		} catch (Exception e) {
 			client = null;
 		}
