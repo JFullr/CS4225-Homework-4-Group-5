@@ -6,9 +6,21 @@ import java.io.IOException;
 import matrix.Matrix;
 import utils.FileUtils;
 
+/**
+ * The Class Main.
+ * 
+ * @author Joseph Fuller, James Irwin, Timothy Brooks
+ * @version Spring 2020
+ */
 public class Main {
 
-	public static void main(String[] args) throws IOException{
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public static void main(String[] args) throws IOException {
 		
 		Matrix m0 = new Matrix(new File("matrix1.txt"));
 		System.out.println(m0.stringify());
