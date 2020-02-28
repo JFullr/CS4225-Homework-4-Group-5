@@ -74,10 +74,7 @@ public class MatrixServer {
 			while (true) {
 				try {
 
-					// wait for any client to connect
 					Socket client = this.server.accept();
-
-					// handles many new client connections on threads
 					this.handleNewRequest(client);
 
 				} catch (IOException e) {
@@ -100,7 +97,6 @@ public class MatrixServer {
 					process = this.requests.remove();
 				}
 				try {
-					System.out.println("GOT REQUEST");
 					process.processToClient();
 				} catch (IOException e) {
 					e.printStackTrace();

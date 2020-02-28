@@ -17,6 +17,9 @@ import utils.FileUtils;
  */
 public class MatrixClient {
 
+	private static final String ERROR_SERVER_CONNECTION = "Could Not Connect To Server";
+	private static final String ERROR_SERVER_TIMEOUT = "Server Timed Out";
+	
 	private static final String FILE_IP_KEY = "server-ip";
 	private static final String FILE_PORT_KEY = "port";
 	private static final int SOCKET_TIMEOUT_SECONDS = 30;
@@ -80,6 +83,7 @@ public class MatrixClient {
 			
 			ObjectInputStream response = new ObjectInputStream(this.client.getInputStream());
 			evaluated = (MatrixEval) response.readObject();
+			
 			///TODO add special error handler messages
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -96,9 +100,7 @@ public class MatrixClient {
 		Socket client = null;
 		try {
 			client = new Socket(this.address, this.port);
-			client.setTcpNoDelay(true);
-			//client.set
-			//client.setSoTimeout(SOCKET_TIMEOUT_SECONDS);
+			client.setSoTimeout(SOCKET_TIMEOUT_SECONDS);
 		} catch (Exception e) {
 			client = null;
 		}
