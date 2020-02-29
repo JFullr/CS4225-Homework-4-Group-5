@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import matrix.Matrix;
+import utils.ErrorHandler;
 import utils.FileUtils;
 
 /**
@@ -70,6 +71,7 @@ public class MatrixClient {
 		if (this.client == null) {
 			this.client = this.createClient();
 			if (this.client == null) {
+				ErrorHandler.addError(ERROR_SERVER_CONNECTION);
 				return null;
 			}
 		}
@@ -84,11 +86,10 @@ public class MatrixClient {
 			ObjectInputStream response = new ObjectInputStream(this.client.getInputStream());
 			evaluated = (MatrixEval) response.readObject();
 			
-			///TODO add special error handler messages
 		} catch (IOException e) {
-			e.printStackTrace();
+			ErrorHandler.addError(ERROR_SERVER_TIMEOUT);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			ErrorHandler.addError("Read an Illegal Object");
 		}
 
 		return evaluated;

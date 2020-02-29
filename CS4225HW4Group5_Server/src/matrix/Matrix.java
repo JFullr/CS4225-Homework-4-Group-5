@@ -163,11 +163,6 @@ public class Matrix implements Serializable {
 		return build.toString();
 	}
 
-	/**
-	 * Read from file.
-	 *
-	 * @param filePath the file path
-	 */
 	private void readFromFile(String filePath) {
 		try {
 
@@ -180,11 +175,6 @@ public class Matrix implements Serializable {
 		}
 	}
 
-	/**
-	 * Read from string.
-	 *
-	 * @param rawMatrix the raw matrix
-	 */
 	private void readFromString(String rawMatrix) {
 
 		rawMatrix = FileUtils.condenseNewLines(rawMatrix);
@@ -195,12 +185,6 @@ public class Matrix implements Serializable {
 
 	}
 
-	/**
-	 * Generate matrix.
-	 *
-	 * @param csvValues the csv values
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	private void generateMatrix(String[] csvValues) throws IllegalArgumentException {
 
 		String[] pieces = csvValues[0].substring(csvValues[0].indexOf(":") + 1).toLowerCase().split("x");

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
+import utils.ErrorHandler;
 import utils.FileUtils;
 
 /**
@@ -121,7 +122,7 @@ public class Matrix implements Serializable {
 	}
 
 	/**
-	 * Sets the value.
+	 * Sets a specific value on the matrix specified by x and y coordinates.
 	 *
 	 * @param y     the y
 	 * @param x     the x
@@ -130,9 +131,25 @@ public class Matrix implements Serializable {
 	public void setValue(int y, int x, double value) {
 		this.matrix[y][x] = value;
 	}
+	
+	public String getStorageRepresentation() {
+		
+		String matrix = this.stringify();
+		matrix = matrix.substring(1, matrix.length()-1);
+		
+		StringBuilder build = new StringBuilder();
+		build.append("Matrix: ");
+		build.append(this.getHeight());
+		build.append(" x ");
+		build.append(this.getWidth());
+		build.append(",");
+		build.append(matrix);
+		
+		return build.toString();
+	}
 
 	/**
-	 * Stringify.
+	 * Converts and returns a string representation of the data.
 	 *
 	 * @return the string
 	 */
@@ -163,11 +180,6 @@ public class Matrix implements Serializable {
 		return build.toString();
 	}
 
-	/**
-	 * Read from file.
-	 *
-	 * @param filePath the file path
-	 */
 	private void readFromFile(String filePath) {
 		try {
 
@@ -176,15 +188,10 @@ public class Matrix implements Serializable {
 			this.generateMatrix(values);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			ErrorHandler.addError("Could not read the file specified: "+filePath);
 		}
 	}
 
-	/**
-	 * Read from string.
-	 *
-	 * @param rawMatrix the raw matrix
-	 */
 	private void readFromString(String rawMatrix) {
 
 		rawMatrix = FileUtils.condenseNewLines(rawMatrix);
@@ -195,12 +202,6 @@ public class Matrix implements Serializable {
 
 	}
 
-	/**
-	 * Generate matrix.
-	 *
-	 * @param csvValues the csv values
-	 * @throws IllegalArgumentException the illegal argument exception
-	 */
 	private void generateMatrix(String[] csvValues) throws IllegalArgumentException {
 
 		String[] pieces = csvValues[0].substring(csvValues[0].indexOf(":") + 1).toLowerCase().split("x");
@@ -211,7 +212,8 @@ public class Matrix implements Serializable {
 		this.matrix = new double[height][width];
 
 		if ((csvValues.length - 1) % width != 0) {
-			throw ERROR_INVALID_MATRIX;
+			ErrorHandler.addError(ERROR_INVALID_MATRIX);
+			return;
 		}
 
 		for (int y = 0; y < height; y++) {

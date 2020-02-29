@@ -7,6 +7,7 @@ import java.util.Random;
 import matrix.Matrix;
 import network.MatrixClient;
 import network.MatrixEval;
+import utils.ErrorHandler;
 
 /**
  * The Class Main.
@@ -30,8 +31,28 @@ public class Main {
 		MatrixClient multiplier = new MatrixClient(new File("config.ini"));
 		MatrixEval result = multiplier.multiplyMatrices(toMultiply);
 		
-		if(result != null) {
+		if(ErrorHandler.hasNextError()) {
+			handleErrors();
+		} else {
+			process(result);
+		}
 		
+		
+		///TODO file handling and printing
+
+	}
+	
+	private static void handleErrors() {
+		
+		while(ErrorHandler.hasNextError()) {
+			System.out.println(ErrorHandler.consumeNextError());
+		}
+		
+	}
+	
+	private static void process(MatrixEval result) {
+		if(result != null) {
+			
 			if(result.getMatrix() != null) {
 				System.out.println(result.getMatrix().stringify());
 			}
@@ -39,9 +60,6 @@ public class Main {
 			System.out.println(result.getTimeMilliseconds());
 			
 		}
-		
-		///TODO file handling and printing
-
 	}
 	
 	private static Matrix[] randomMultipliableMatricies() {
