@@ -54,7 +54,10 @@ public class MatrixClient {
 
 			this.address = address;
 			this.port = port;
-
+		
+		} catch (IOException e) {
+			ErrorHandler.addError(ERROR_INIT_FILE);
+			return;
 		} catch (Exception e) {
 			ErrorHandler.addError(ERROR_INIT_FILE_VALUE);
 			return;

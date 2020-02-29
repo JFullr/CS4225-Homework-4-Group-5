@@ -58,3 +58,4 @@ dkms.conf
 #java
 .metadata/
 .reccomenders/
+experimental/
