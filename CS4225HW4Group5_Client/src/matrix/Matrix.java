@@ -38,8 +38,8 @@ public class Matrix implements Serializable {
 		int offset = 0;
 		do {
 			
-			found.add(cur);
 			cur = new Matrix(values);
+			found.add(cur);
 			offset = cur.getHeight() * cur.getWidth() +1;
 			values = Arrays.copyOfRange(values, offset, values.length);
 			
@@ -131,7 +131,7 @@ public class Matrix implements Serializable {
 	 * @return the width
 	 */
 	public int getWidth() {
-		return this.matrix == null ? -1 : this.matrix[0].length;
+		return this.matrix == null ? 0 : this.matrix[0].length;
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class Matrix implements Serializable {
 	 * @return the height
 	 */
 	public int getHeight() {
-		return this.matrix == null ? -1 : this.matrix.length;
+		return this.matrix == null ? 0 : this.matrix.length;
 	}
 
 	/**
