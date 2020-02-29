@@ -13,30 +13,30 @@ import network.MatrixServer;
  * @version Spring 2020
  */
 public class Main {
-	
+
 	private static final String ERROR_CONFIG_START = "Could Not Read Config File";
-	
+
 	/**
 	 * The main method.
 	 *
 	 * @param args the arguments
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws InterruptedException 
+	 * @throws IOException          Signals that an I/O exception has occurred.
+	 * @throws InterruptedException the interrupted exception
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException {
-		
+
 		/*
-		Matrix m0 = new Matrix(new File("matrix1.txt"));
-		System.out.println(m0.stringify());
-		
-		Matrix m1 = new Matrix(new String(FileUtils.readFile("matrix2.txt")));
-		System.out.println(m1.stringify());
-		
-		Matrix m3 = m0.multiply(m1);
-		
-		System.out.println(m3.stringify());
-		//*/
-		
+		 * Matrix m0 = new Matrix(new File("matrix1.txt"));
+		 * System.out.println(m0.stringify());
+		 * 
+		 * Matrix m1 = new Matrix(new String(FileUtils.readFile("matrix2.txt")));
+		 * System.out.println(m1.stringify());
+		 * 
+		 * Matrix m3 = m0.multiply(m1);
+		 * 
+		 * System.out.println(m3.stringify()); //
+		 */
+
 		MatrixServer server;
 		try {
 			server = new MatrixServer(new File("config.ini"));
@@ -45,19 +45,18 @@ public class Main {
 			return;
 		}
 		server.startServer();
-		
+
 		Scanner exit = new Scanner(System.in);
-		while(true) {
-			
+		while (true) {
+
 			System.out.println("Type 'exit' to end the server");
-			
+
 			String input = exit.nextLine();
-			if(input.toLowerCase().equals("exit")) {
+			if (input.toLowerCase().equals("exit")) {
 				exit.close();
 				System.exit(0);
 			}
 		}
-		
 	}
 
 }

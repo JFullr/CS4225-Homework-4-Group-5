@@ -23,7 +23,7 @@ public class MatrixServer {
 
 	private static final String FILE_PORT_KEY = "port";
 	private static final Object REQUESTS_LOCK = new Object();
-	
+
 	private volatile Queue<MatrixRequest> requests;
 	private int port;
 	private ServerSocket server;
@@ -32,12 +32,12 @@ public class MatrixServer {
 	 * Instantiates a new matrix server.
 	 *
 	 * @param initFile the init file
-	 * @throws IOException Signals that an I/O exception has occurred on file read failure.
+	 * @throws Exception the exception
 	 */
 	public MatrixServer(File initFile) throws Exception {
-		
+
 		HashMap<String, String> config = ConfigUtils.readConfigFile(initFile.getPath());
-		
+
 		this.port = Integer.parseInt(config.get(FILE_PORT_KEY));
 
 	}
@@ -47,23 +47,22 @@ public class MatrixServer {
 	 *
 	 * @param port the port
 	 */
-	public MatrixServer(int port){
+	public MatrixServer(int port) {
 		this.port = port;
 	}
 
 	/**
 	 * Starts the matrix server
 	 *
-	 * @param port the port
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public void startServer() throws IOException {
-		
+
 		this.server = new ServerSocket(this.port);
 		this.requests = new ArrayDeque<MatrixRequest>();
 		this.requestsReaderThread();
 		this.requestsProcesserThread();
-		
+
 	}
 
 	private void requestsReaderThread() {
@@ -86,10 +85,12 @@ public class MatrixServer {
 			while (true) {
 				MatrixRequest process = null;
 				synchronized (REQUESTS_LOCK) {
-					while(this.requests.isEmpty()) {
+					while (this.requests.isEmpty()) {
 						try {
 							REQUESTS_LOCK.wait();
-						} catch (InterruptedException e) {e.printStackTrace();}
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 					process = this.requests.remove();
 				}
@@ -106,10 +107,10 @@ public class MatrixServer {
 		new Thread(() -> {
 
 			try {
-				
+
 				ObjectInputStream incoming = new ObjectInputStream(client.getInputStream());
 
-				Matrix[] deserialized = (Matrix[])incoming.readObject();
+				Matrix[] deserialized = (Matrix[]) incoming.readObject();
 
 				synchronized (REQUESTS_LOCK) {
 					this.requests.add(new MatrixRequest(client, deserialized));

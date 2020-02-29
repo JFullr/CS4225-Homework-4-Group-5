@@ -18,15 +18,14 @@ import utils.ErrorHandler;
  * @version Spring 2020
  */
 public class MatrixClient {
-	
+
 	private static final String ERROR_INIT_FILE = "Could Not Read Init File";
 	private static final String ERROR_INIT_FILE_VALUE = "Illegal value in Init File";
 
 	private static final String ERROR_SERVER_CONNECTION = "Could Not Connect To Server";
 	private static final String ERROR_NETWORK_OBJECT = "Read an Illegal Object";
 	private static final String ERROR_SERVER_TIMEOUT = "Server Timed Out";
-	
-	
+
 	private static final String FILE_ADDRESS_KEY = "server-ip";
 	private static final String FILE_PORT_KEY = "port";
 	private static final int SOCKET_TIMEOUT_SECONDS = 30;
@@ -42,22 +41,21 @@ public class MatrixClient {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public MatrixClient(File initFile) {
-		
-		
+
 		try {
 			HashMap<String, String> config = ConfigUtils.readConfigFile(initFile.getPath());
-			
+
 			String address = config.get(FILE_ADDRESS_KEY);
-			if(address == null) {
+			if (address == null) {
 				throw null;
 			}
-			
+
 			int port = Integer.parseInt(config.get(FILE_PORT_KEY));
 
 			this.address = address;
 			this.port = port;
-			
-		}catch(Exception e) {
+
+		} catch (Exception e) {
 			ErrorHandler.addError(ERROR_INIT_FILE_VALUE);
 			return;
 		}
@@ -75,10 +73,10 @@ public class MatrixClient {
 	}
 
 	/**
-	 * Requests the matrix server to evaluate and respond with a product of the given
-	 * matrices and returns the response as a Matrix object.
+	 * Requests the matrix server to evaluate and respond with a product of the
+	 * given matrices and returns the response as a Matrix object.
 	 *
-	 * @param matrices the matrixes
+	 * @param matrixes the matrixes
 	 * @return the matrix
 	 */
 	public MatrixEval multiplyMatrices(Matrix... matrixes) {
@@ -93,14 +91,14 @@ public class MatrixClient {
 
 		MatrixEval evaluated = null;
 		try {
-			
+
 			ObjectOutputStream write = new ObjectOutputStream(this.client.getOutputStream());
 			write.writeObject(matrixes);
 			write.flush();
-			
+
 			ObjectInputStream response = new ObjectInputStream(this.client.getInputStream());
 			evaluated = (MatrixEval) response.readObject();
-			
+
 		} catch (IOException e) {
 			ErrorHandler.addError(ERROR_SERVER_TIMEOUT);
 		} catch (ClassNotFoundException e) {

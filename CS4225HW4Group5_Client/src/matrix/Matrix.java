@@ -131,20 +131,25 @@ public class Matrix implements Serializable {
 	public void setValue(int y, int x, double value) {
 		this.matrix[y][x] = value;
 	}
-	
+
+	/**
+	 * Gets the storage representation.
+	 *
+	 * @return the storage representation
+	 */
 	public String getStorageRepresentation() {
-		
-		String matrix = this.stringify();
-		matrix = matrix.substring(1, matrix.length()-1);
-		
+
+		String matrixStr = this.stringify();
+		matrixStr = matrixStr.substring(1, matrixStr.length() - 1);
+
 		StringBuilder build = new StringBuilder();
 		build.append("Matrix: ");
 		build.append(this.getHeight());
 		build.append(" x ");
 		build.append(this.getWidth());
 		build.append(",");
-		build.append(matrix);
-		
+		build.append(matrixStr);
+
 		return build.toString();
 	}
 
@@ -188,7 +193,7 @@ public class Matrix implements Serializable {
 			this.generateMatrix(values);
 
 		} catch (IOException e) {
-			ErrorHandler.addError("Could not read the file specified: "+filePath);
+			ErrorHandler.addError("Could not read the file specified: " + filePath);
 		}
 	}
 
