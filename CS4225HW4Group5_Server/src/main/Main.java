@@ -13,7 +13,9 @@ import network.MatrixServer;
  * @version Spring 2020
  */
 public class Main {
-
+	
+	private static final String ERROR_CONFIG_START = "Could Not Read Config File";
+	
 	/**
 	 * The main method.
 	 *
@@ -35,7 +37,13 @@ public class Main {
 		System.out.println(m3.stringify());
 		//*/
 		
-		MatrixServer server = new MatrixServer(new File("config.ini"));
+		MatrixServer server;
+		try {
+			server = new MatrixServer(new File("config.ini"));
+		} catch (Exception e) {
+			System.out.println(ERROR_CONFIG_START);
+			return;
+		}
 		server.startServer();
 		
 		Scanner exit = new Scanner(System.in);

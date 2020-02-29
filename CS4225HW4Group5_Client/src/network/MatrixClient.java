@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
 
 import matrix.Matrix;
+import utils.ConfigUtils;
 import utils.ErrorHandler;
-import utils.FileUtils;
 
 /**
  * The Class MatrixClient handles the client side of the matrix operations.
@@ -26,7 +27,7 @@ public class MatrixClient {
 	private static final String ERROR_SERVER_TIMEOUT = "Server Timed Out";
 	
 	
-	private static final String FILE_IP_KEY = "server-ip";
+	private static final String FILE_ADDRESS_KEY = "server-ip";
 	private static final String FILE_PORT_KEY = "port";
 	private static final int SOCKET_TIMEOUT_SECONDS = 30;
 
@@ -42,27 +43,20 @@ public class MatrixClient {
 	 */
 	public MatrixClient(File initFile) {
 		
-		String[] data = null;
 		
 		try {
-
-			data = FileUtils.readLines(initFile.getPath());
-		
-		}catch(Exception e) {
-			ErrorHandler.addError(ERROR_INIT_FILE);
-			return;
-		}
-		
-		try {
-			for (String line : data) {
-				if (line.toLowerCase().startsWith(FILE_IP_KEY)) {
-					line = line.substring(line.indexOf(":") + 1);
-					this.address = line.trim();
-				} else if (line.toLowerCase().startsWith(FILE_PORT_KEY)) {
-					line = line.substring(line.indexOf(":") + 1);
-					this.port = Integer.parseInt(line.trim());
-				}
+			HashMap<String, String> config = ConfigUtils.readConfigFile(initFile.getPath());
+			
+			String address = config.get(FILE_ADDRESS_KEY);
+			if(address == null) {
+				throw null;
 			}
+			
+			int port = Integer.parseInt(config.get(FILE_PORT_KEY));
+
+			this.address = address;
+			this.port = port;
+			
 		}catch(Exception e) {
 			ErrorHandler.addError(ERROR_INIT_FILE_VALUE);
 			return;

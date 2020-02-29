@@ -6,9 +6,11 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.Queue;
 
 import matrix.Matrix;
+import utils.ConfigUtils;
 import utils.FileUtils;
 
 /**
@@ -32,16 +34,11 @@ public class MatrixServer {
 	 * @param initFile the init file
 	 * @throws IOException Signals that an I/O exception has occurred on file read failure.
 	 */
-	public MatrixServer(File initFile) throws IOException {
+	public MatrixServer(File initFile) throws Exception {
 		
-		String[] data = FileUtils.readLines(initFile.getPath());
-		for (String line : data) {
-			if (line.toLowerCase().startsWith(FILE_PORT_KEY)) {
-				line = line.substring(line.indexOf(":") + 1);
-				this.port = Integer.parseInt(line.trim());
-				break;
-			}
-		}
+		HashMap<String, String> config = ConfigUtils.readConfigFile(initFile.getPath());
+		
+		this.port = Integer.parseInt(config.get(FILE_PORT_KEY));
 
 	}
 
