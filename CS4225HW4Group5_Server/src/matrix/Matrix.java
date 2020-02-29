@@ -121,7 +121,7 @@ public class Matrix implements Serializable {
 	}
 
 	/**
-	 * Sets the value.
+	 * Sets a specific value on the matrix specified by x and y coordinates.
 	 *
 	 * @param y     the y
 	 * @param x     the x
@@ -132,7 +132,7 @@ public class Matrix implements Serializable {
 	}
 
 	/**
-	 * Stringify.
+	 * Converts and returns a string representation of the data.
 	 *
 	 * @return the string
 	 */
