@@ -44,8 +44,9 @@ public class Main {
 			System.out.println(ERROR_CONFIG_START);
 			return;
 		}
-		server.startServer();
-
+		//server.startServer();
+		server.start();
+		
 		Scanner exit = new Scanner(System.in);
 		while (true) {
 

@@ -30,10 +30,10 @@ public class Main {
 	public static void main(String[] args) {
 
 		try {
-			if (args.length == 0) {
+			/*if (args.length == 0) {
 				System.err.println("need to specify .txt file");
 				System.exit(1);
-			}
+			}*/
 			Matrix[] toMultiply = Main.randomMultipliableMatricies();
 
 			MatrixClient multiplier = new MatrixClient(new File("config.ini"));
