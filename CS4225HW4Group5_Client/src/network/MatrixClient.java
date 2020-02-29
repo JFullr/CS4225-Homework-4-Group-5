@@ -17,9 +17,14 @@ import utils.FileUtils;
  * @version Spring 2020
  */
 public class MatrixClient {
+	
+	private static final String ERROR_INIT_FILE = "Could Not Read Init File";
+	private static final String ERROR_INIT_FILE_VALUE = "Illegal value in Init File";
 
 	private static final String ERROR_SERVER_CONNECTION = "Could Not Connect To Server";
+	private static final String ERROR_NETWORK_OBJECT = "Read an Illegal Object";
 	private static final String ERROR_SERVER_TIMEOUT = "Server Timed Out";
+	
 	
 	private static final String FILE_IP_KEY = "server-ip";
 	private static final String FILE_PORT_KEY = "port";
@@ -35,16 +40,32 @@ public class MatrixClient {
 	 * @param initFile the init file
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public MatrixClient(File initFile) throws IOException {
-		String[] data = FileUtils.readLines(initFile.getPath());
-		for (String line : data) {
-			if (line.toLowerCase().startsWith(FILE_IP_KEY)) {
-				line = line.substring(line.indexOf(":") + 1);
-				this.address = line.trim();
-			} else if (line.toLowerCase().startsWith(FILE_PORT_KEY)) {
-				line = line.substring(line.indexOf(":") + 1);
-				this.port = Integer.parseInt(line.trim());
+	public MatrixClient(File initFile) {
+		
+		String[] data = null;
+		
+		try {
+
+			data = FileUtils.readLines(initFile.getPath());
+		
+		}catch(Exception e) {
+			ErrorHandler.addError(ERROR_INIT_FILE);
+			return;
+		}
+		
+		try {
+			for (String line : data) {
+				if (line.toLowerCase().startsWith(FILE_IP_KEY)) {
+					line = line.substring(line.indexOf(":") + 1);
+					this.address = line.trim();
+				} else if (line.toLowerCase().startsWith(FILE_PORT_KEY)) {
+					line = line.substring(line.indexOf(":") + 1);
+					this.port = Integer.parseInt(line.trim());
+				}
 			}
+		}catch(Exception e) {
+			ErrorHandler.addError(ERROR_INIT_FILE_VALUE);
+			return;
 		}
 	}
 
@@ -89,7 +110,7 @@ public class MatrixClient {
 		} catch (IOException e) {
 			ErrorHandler.addError(ERROR_SERVER_TIMEOUT);
 		} catch (ClassNotFoundException e) {
-			ErrorHandler.addError("Read an Illegal Object");
+			ErrorHandler.addError(ERROR_NETWORK_OBJECT);
 		}
 
 		return evaluated;

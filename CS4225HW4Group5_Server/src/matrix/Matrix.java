@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
+import utils.ErrorHandler;
 import utils.FileUtils;
 
 /**
@@ -130,6 +131,22 @@ public class Matrix implements Serializable {
 	public void setValue(int y, int x, double value) {
 		this.matrix[y][x] = value;
 	}
+	
+	public String getStorageRepresentation() {
+		
+		String matrix = this.stringify();
+		matrix = matrix.substring(1, matrix.length()-1);
+		
+		StringBuilder build = new StringBuilder();
+		build.append("Matrix: ");
+		build.append(this.getHeight());
+		build.append(" x ");
+		build.append(this.getWidth());
+		build.append(",");
+		build.append(matrix);
+		
+		return build.toString();
+	}
 
 	/**
 	 * Converts and returns a string representation of the data.
@@ -144,8 +161,8 @@ public class Matrix implements Serializable {
 
 		StringBuilder build = new StringBuilder();
 		build.append("[");
-		for (int y = 0; y < this.matrix.length; y++) {
-			for (int x = 0; x < this.matrix[y].length; x++) {
+		for (int y = 0; y < this.getHeight(); y++) {
+			for (int x = 0; x < this.getWidth(); x++) {
 
 				build.append(this.matrix[y][x]);
 
@@ -171,7 +188,7 @@ public class Matrix implements Serializable {
 			this.generateMatrix(values);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			ErrorHandler.addError("Could not read the file specified: "+filePath);
 		}
 	}
 
@@ -195,7 +212,8 @@ public class Matrix implements Serializable {
 		this.matrix = new double[height][width];
 
 		if ((csvValues.length - 1) % width != 0) {
-			throw ERROR_INVALID_MATRIX;
+			ErrorHandler.addError(ERROR_INVALID_MATRIX);
+			return;
 		}
 
 		for (int y = 0; y < height; y++) {

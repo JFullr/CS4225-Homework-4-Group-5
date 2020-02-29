@@ -161,8 +161,8 @@ public class Matrix implements Serializable {
 
 		StringBuilder build = new StringBuilder();
 		build.append("[");
-		for (int y = 0; y < this.matrix.length; y++) {
-			for (int x = 0; x < this.matrix[y].length; x++) {
+		for (int y = 0; y < this.getHeight(); y++) {
+			for (int x = 0; x < this.getWidth(); x++) {
 
 				build.append(this.matrix[y][x]);
 

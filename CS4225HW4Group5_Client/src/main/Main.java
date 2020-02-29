@@ -16,6 +16,8 @@ import utils.ErrorHandler;
  * @version Spring 2020
  */
 public class Main {
+	
+	public static final int MAX_MATRIX_PRINT_WIDTH = 15;
 
 	public static final int MAX_MATRIX_SIZE = 150;
 
@@ -25,10 +27,12 @@ public class Main {
 	 * @param args the arguments
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		
 		Matrix[] toMultiply = Main.randomMultipliableMatricies();
+		
 		MatrixClient multiplier = new MatrixClient(new File("config.ini"));
+		
 		MatrixEval result = multiplier.multiplyMatrices(toMultiply);
 		
 		if(ErrorHandler.hasNextError()) {
@@ -36,20 +40,11 @@ public class Main {
 		} else {
 			process(result);
 		}
-		
-		
-		///TODO file handling and printing
 
 	}
 	
-	private static void handleErrors() {
-		
-		while(ErrorHandler.hasNextError()) {
-			System.out.println(ErrorHandler.consumeNextError());
-		}
-		
-	}
 	
+	///TODO file handling and printing
 	private static void process(MatrixEval result) {
 		if(result != null) {
 			
@@ -60,6 +55,15 @@ public class Main {
 			System.out.println(result.getTimeMilliseconds());
 			
 		}
+	}
+	
+	
+	private static void handleErrors() {
+		
+		while(ErrorHandler.hasNextError()) {
+			System.out.println(ErrorHandler.consumeNextError());
+		}
+		
 	}
 	
 	private static Matrix[] randomMultipliableMatricies() {
