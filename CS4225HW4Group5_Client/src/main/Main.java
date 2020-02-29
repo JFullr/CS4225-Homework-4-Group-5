@@ -28,14 +28,20 @@ public class Main {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void main(String[] args) {
-
+		
 		try {
-			/*if (args.length == 0) {
+			
+			/*
+			if (args == null || args.length == 0) {
 				System.err.println("need to specify .txt file");
 				System.exit(1);
-			}*/
-			Matrix[] toMultiply = Main.randomMultipliableMatricies();
-
+			}
+			/*/
+			Matrix[] toMultiply = Matrix.readMatrixes(new File("matrix3.txt"));
+					//Main.randomMultipliableMatricies();
+			//*/
+			
+			
 			MatrixClient multiplier = new MatrixClient(new File("config.ini"));
 
 			MatrixEval result = multiplier.multiplyMatrices(toMultiply);

@@ -22,11 +22,11 @@ public class Matrix implements Serializable {
 	private static final IllegalArgumentException ERROR_INVALID_MATRIX = new IllegalArgumentException(
 			"Matrix Specified Had Missing Data Or Was Imbalanced");
 	
-	public static Matrix[] generateMatrixes(File file) throws Exception {
+	public static Matrix[] readMatrixes(File file) throws Exception {
 		String raw = new String(FileUtils.readFile(file.getPath()));
-		return Matrix.generateMatrixes(raw);
+		return Matrix.readMatrixes(raw);
 	}
-	public static Matrix[] generateMatrixes(String rawData) throws Exception {
+	public static Matrix[] readMatrixes(String rawData) throws Exception {
 		
 		String rawMatrix = FileUtils.condenseNewLines(rawData);
 		rawMatrix = rawMatrix.replaceAll("\n", ",");
@@ -45,7 +45,7 @@ public class Matrix implements Serializable {
 			
 		}while(values.length > 1);
 		
-		return (Matrix[])found.toArray();
+		return found.toArray(new Matrix[found.size()]);
 		
 	}
 	
@@ -254,18 +254,17 @@ public class Matrix implements Serializable {
 		int width = Integer.parseInt(pieces[1].trim());
 
 		this.matrix = new double[height][width];
-
-		if ((csvValues.length - 1) % width != 0) {
-			ErrorHandler.addError(ERROR_INVALID_MATRIX);
-			return;
-		}
-
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				this.matrix[y][x] = Double.parseDouble(csvValues[x + y * width + 1].trim());
+		
+		try {
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					this.matrix[y][x] = Double.parseDouble(csvValues[x + y * width + 1].trim());
+				}
 			}
+		}catch(Exception e) {
+			ErrorHandler.addError(ERROR_INVALID_MATRIX);
+			this.matrix = null;
 		}
-
 	}
 
 }

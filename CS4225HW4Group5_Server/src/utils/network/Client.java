@@ -12,9 +12,6 @@ public class Client {
 	private int timeout;
 	private Socket client;
 	
-	private boolean hasIn;
-	private boolean hasOut;
-	
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
 	
@@ -35,8 +32,6 @@ public class Client {
 		this.output = null;
 		this.address = address;
 		this.port = port;
-		this.hasIn = false;
-		this.hasOut = false;
 		this.timeout = timeoutInSeconds*1000;
 	}
 	
@@ -46,11 +41,9 @@ public class Client {
 		
 		try {
 			this.input = new ObjectInputStream(this.client.getInputStream());
-			this.hasIn = true;
 		}catch(java.lang.NullPointerException e) {e.printStackTrace();}
 		try {
 			this.output = new ObjectOutputStream(this.client.getOutputStream());
-			this.hasOut = true;
 		}catch(java.lang.NullPointerException e) {}
 		
 	}
@@ -74,7 +67,7 @@ public class Client {
 	
 	public void sendData(Object data) throws IOException {
 		
-		if(!this.hasOut) {
+		if(this.output == null) {
 			return;
 		}
 		
@@ -85,7 +78,7 @@ public class Client {
 	
 	public Object readBlocking() throws ClassNotFoundException, IOException {
 		
-		if(!this.hasIn) {
+		if(this.input == null) {
 			return null;
 		}
 		

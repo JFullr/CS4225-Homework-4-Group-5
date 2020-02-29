@@ -3,6 +3,8 @@ package matrix;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import utils.ErrorHandler;
 import utils.FileUtils;
@@ -19,7 +21,34 @@ public class Matrix implements Serializable {
 	private static final long serialVersionUID = 1955136018662799383L;
 	private static final IllegalArgumentException ERROR_INVALID_MATRIX = new IllegalArgumentException(
 			"Matrix Specified Had Missing Data Or Was Imbalanced");
-
+	
+	public static Matrix[] generateMatrixes(File file) throws Exception {
+		String raw = new String(FileUtils.readFile(file.getPath()));
+		return Matrix.generateMatrixes(raw);
+	}
+	public static Matrix[] generateMatrixes(String rawData) throws Exception {
+		
+		String rawMatrix = FileUtils.condenseNewLines(rawData);
+		rawMatrix = rawMatrix.replaceAll("\n", ",");
+		String[] values = rawMatrix.split(",");
+		
+		ArrayList<Matrix> found = new ArrayList<Matrix>();
+		
+		Matrix cur = new Matrix(values);
+		int offset = 0;
+		do {
+			
+			cur = new Matrix(values);
+			found.add(cur);
+			offset = cur.getHeight() * cur.getWidth() +1;
+			values = Arrays.copyOfRange(values, offset, values.length);
+			
+		}while(values.length > 1);
+		
+		return (Matrix[])found.toArray();
+		
+	}
+	
 	private double[][] matrix;
 
 	/**
@@ -45,6 +74,10 @@ public class Matrix implements Serializable {
 	 */
 	public Matrix(String rawMatrix) {
 		this.readFromString(rawMatrix);
+	}
+	
+	public Matrix(String[] matrixCsvValues) {
+		this.readFromCsv(matrixCsvValues);
 	}
 
 	/**
@@ -98,7 +131,7 @@ public class Matrix implements Serializable {
 	 * @return the width
 	 */
 	public int getWidth() {
-		return this.matrix == null ? -1 : this.matrix[0].length;
+		return this.matrix == null ? 0 : this.matrix[0].length;
 	}
 
 	/**
@@ -107,7 +140,7 @@ public class Matrix implements Serializable {
 	 * @return the height
 	 */
 	public int getHeight() {
-		return this.matrix == null ? -1 : this.matrix.length;
+		return this.matrix == null ? 0 : this.matrix.length;
 	}
 
 	/**
@@ -147,7 +180,7 @@ public class Matrix implements Serializable {
 		build.append(this.getHeight());
 		build.append(" x ");
 		build.append(this.getWidth());
-		build.append(",");
+		build.append("\n");
 		build.append(matrixStr);
 
 		return build.toString();
@@ -202,6 +235,12 @@ public class Matrix implements Serializable {
 		rawMatrix = FileUtils.condenseNewLines(rawMatrix);
 		rawMatrix = rawMatrix.replaceAll("\n", ",");
 		String[] values = rawMatrix.split(",");
+
+		this.readFromCsv(values);
+
+	}
+	
+	private void readFromCsv(String[] values) {
 
 		this.generateMatrix(values);
 
