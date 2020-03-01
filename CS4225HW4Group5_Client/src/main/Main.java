@@ -65,7 +65,7 @@ public class Main {
 				System.out.println(result.getMatrix().stringify());
 			}
 			System.out.println(result.getError());
-			System.out.println(result.getTimeMilliseconds());
+			System.out.println("Miliseconds Taken: " +result.getTimeMilliseconds());
 
 		}
 	}
