@@ -19,7 +19,7 @@ public class MatrixServer {
 	private static final String FILE_PORT_KEY = "port";
 
 	private int port;
-	
+
 	private Server server;
 
 	/**
@@ -60,15 +60,15 @@ public class MatrixServer {
 			e.printStackTrace();
 			return false;
 		}
-		
-		return this.server.start((client)->{
+
+		return this.server.start((client) -> {
 			Matrix[] matrixes = null;
 			try {
-				matrixes = (Matrix[])client.readBlocking();
+				matrixes = (Matrix[]) client.readBlocking();
 			} catch (ClassNotFoundException e) {
 				System.err.println("Illegal Object Read");
 				return;
-			} catch (IOException e) { 
+			} catch (IOException e) {
 				return;
 			}
 			MatrixEval eval = new MatrixEval(matrixes);
@@ -79,6 +79,5 @@ public class MatrixServer {
 			}
 		});
 	}
-
 
 }

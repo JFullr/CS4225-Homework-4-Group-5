@@ -21,34 +21,49 @@ public class Matrix implements Serializable {
 	private static final long serialVersionUID = 1955136018662799383L;
 	private static final IllegalArgumentException ERROR_INVALID_MATRIX = new IllegalArgumentException(
 			"Matrix Specified Had Missing Data Or Was Imbalanced");
-	
+
+	/**
+	 * Reads matrixes from the given file.
+	 *
+	 * @param file the file
+	 * @return the matrix[]
+	 * @throws Exception the exception
+	 */
 	public static Matrix[] generateMatrixes(File file) throws Exception {
 		String raw = new String(FileUtils.readFile(file.getPath()));
 		return Matrix.generateMatrixes(raw);
 	}
+
+	/**
+	 * Reads matrixes from raw data.
+	 *
+	 * @param rawData the raw data
+	 * @return the matrix[]
+	 * @throws Exception the exception
+	 */
 	public static Matrix[] generateMatrixes(String rawData) throws Exception {
-		
+
 		String rawMatrix = FileUtils.condenseNewLines(rawData);
 		rawMatrix = rawMatrix.replaceAll("\n", ",");
 		String[] values = rawMatrix.split(",");
-		
+
 		ArrayList<Matrix> found = new ArrayList<Matrix>();
-		
+
 		Matrix cur = new Matrix(values);
 		int offset = 0;
 		do {
-			
+
 			cur = new Matrix(values);
 			found.add(cur);
-			offset = cur.getHeight() * cur.getWidth() +1;
+			offset = cur.getHeight() * cur.getWidth() + 1;
 			values = Arrays.copyOfRange(values, offset, values.length);
-			
-		}while(values.length > 1);
-		
-		return (Matrix[])found.toArray();
-		
+
+		} while (values.length > 1);
+
+		return (Matrix[]) found.toArray();
+
 	}
-	
+
 	private double[][] matrix;
 
 	/**
@@ -75,7 +90,12 @@ public class Matrix implements Serializable {
 	public Matrix(String rawMatrix) {
 		this.readFromString(rawMatrix);
 	}
-	
+
+	/**
+	 * Instantiates a new matrix based on the given csv values.
+	 *
+	 * @param matrixCsvValues the matrix csv values
+	 */
 	public Matrix(String[] matrixCsvValues) {
 		this.readFromCsv(matrixCsvValues);
 	}
@@ -239,7 +259,7 @@ public class Matrix implements Serializable {
 		this.readFromCsv(values);
 
 	}
-	
+
 	private void readFromCsv(String[] values) {
 
 		this.generateMatrix(values);

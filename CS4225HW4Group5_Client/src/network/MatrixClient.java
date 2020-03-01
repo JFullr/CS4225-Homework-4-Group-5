@@ -92,7 +92,7 @@ public class MatrixClient {
 		}
 		
 		try {
-			evaluated = (MatrixEval)client.readBlocking();
+			evaluated = (MatrixEval) client.readBlocking();
 		} catch (ClassNotFoundException e1) {
 			ErrorHandler.addError(ERROR_NETWORK_OBJECT);
 		} catch (IOException e1) {
