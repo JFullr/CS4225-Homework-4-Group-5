@@ -30,6 +30,14 @@ public class Main {
 	public static void main(String[] args) {
 		
 		try {
+			Matrix[] aa = Matrix.readMatrixes(new File("matrix3.txt"));
+			stressTest(aa);
+			return;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
 			
 			/*
 			if (args == null || args.length == 0) {
@@ -43,7 +51,6 @@ public class Main {
 			
 			
 			MatrixClient multiplier = new MatrixClient(new File("config.ini"));
-
 			MatrixEval result = multiplier.multiplyMatrices(toMultiply);
 
 			if (ErrorHandler.hasNextError()) {
@@ -103,6 +110,29 @@ public class Main {
 
 		return new Matrix[] { matrixA, matrixB };
 
+	}
+	
+	private static void stressTest(final Matrix... matricies) {
+		Thread[] pool = new Thread[7000];
+		MatrixClient multiplier = new MatrixClient(new File("config.ini"));
+		
+		for(int i = 0; i < pool.length; i++) {
+			pool[i] = new Thread(()->{
+				MatrixEval eval = multiplier.multiplyMatrices(matricies);
+				//process(eval);
+			});
+		}
+		
+		for(int i = 0; i < pool.length; i++) {
+			pool[i].start();
+		}
+		
+		for(int i = 0; i < pool.length; i++) {
+			try {
+				pool[i].join();
+			} catch (InterruptedException e) { e.printStackTrace();}
+		}
+		
 	}
 
 }
