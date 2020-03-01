@@ -95,7 +95,7 @@ public class Main {
 	private static void saveMatrixToDisk(Matrix matrix) {
 		File save = new File("MatrixCalculation.txt");
 		try (PrintWriter out = new PrintWriter(save)){
-			out.println(matrix.stringify());
+			out.println(matrix.getStorageRepresentation());
 			out.flush();
 			
 			System.out.println("The Matrix is available to at: "+save.getAbsolutePath());
