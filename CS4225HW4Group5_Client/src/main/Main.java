@@ -2,7 +2,9 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Random;
+import java.util.Scanner;
 
 import matrix.Matrix;
 import network.MatrixClient;
@@ -17,7 +19,10 @@ import utils.ErrorHandler;
  */
 public class Main {
 
-	public static final int MAX_MATRIX_PRINT_WIDTH = 15;
+	private static final String CLIENT_CONFIG_FILE = "config.ini";
+	
+	public static final int MAX_MATRIX_PRINT_WIDTH = 10;
+	public static final int MAX_MATRIX_PRINT_HEIGHT = 20;
 
 	public static final int MAX_MATRIX_SIZE = 150;
 
@@ -30,51 +35,102 @@ public class Main {
 	public static void main(String[] args) {
 		
 		try {
-			Matrix[] aa = Matrix.readMatrixes(new File("matrix3.txt"));
-			stressTest(aa);
-			return;
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		
-		try {
 			
-			/*
-			if (args == null || args.length == 0) {
-				System.err.println("need to specify .txt file");
-				System.exit(1);
+			Matrix[] toMultiply = null;
+			
+			if (args != null && args.length != 0) {
+				
+				toMultiply = Matrix.readMatrixes(new File(args[0]));
+				
+			}else {
+				System.out.println("No matrix file was given");
+				toMultiply = getUserMatrixPath();
 			}
-			/*/
-			Matrix[] toMultiply = Matrix.readMatrixes(new File("matrix3.txt"));
-					//Main.randomMultipliableMatricies();
-			//*/
 			
-			
-			MatrixClient multiplier = new MatrixClient(new File("config.ini"));
+			MatrixClient multiplier = new MatrixClient(new File(CLIENT_CONFIG_FILE));
 			MatrixEval result = multiplier.multiplyMatrices(toMultiply);
 
 			if (ErrorHandler.hasNextError()) {
 				handleErrors();
 			} else {
-				process(result);
+				processResult(result);
 			}
+			
 		} catch (Exception e) {
 			System.err.println("Error: caused by: " + e.getMessage());
 			System.exit(1);
 		}
+		
 	}
 
 	/// TODO file handling and printing
-	private static void process(MatrixEval result) {
-		if (result != null) {
+	private static void processResult(MatrixEval result) {
+		if (result == null) {
+			System.out.println("The Server Did Not Give A Response");
+			return;
+		}
 
-			if (result.getMatrix() != null) {
+		if (result.getMatrix() != null) {
+			if(result.getMatrix().getHeight() > MAX_MATRIX_PRINT_HEIGHT || 
+				result.getMatrix().getWidth() > MAX_MATRIX_PRINT_WIDTH){
+				System.out.println("The matrix is too large to display and will be saved to disk.");
+			}else {
 				System.out.println(result.getMatrix().stringify());
 			}
-			System.out.println(result.getError());
-			System.out.println("Miliseconds Taken: " +result.getTimeMilliseconds());
-
 		}
+		System.out.println("Errors: "+result.getError());
+		System.out.println("Computed In:");
+		long miliseconds = result.getTimeMilliseconds();
+		long seconds = miliseconds/1000;
+		long minutes = seconds/60;
+		System.out.println(minutes+"mins  "+seconds+"seconds  "+miliseconds+"millis");
+		
+		if (result.getMatrix() != null) {
+			saveMatrixToDisk(result.getMatrix());
+		}
+		
+	}
+	
+	
+	private static void saveMatrixToDisk(Matrix matrix) {
+		File save = new File("MatrixCalculation.txt");
+		try (PrintWriter out = new PrintWriter(save)){
+			out.println(matrix.stringify());
+			out.flush();
+			
+			System.out.println("The Matrix is available to at: "+save.getAbsolutePath());
+			
+		}catch(Exception e) {
+			System.out.println("Could Not Write The Matrix To File");
+		}
+	}
+	
+	
+	
+	private static Matrix[] getUserMatrixPath() {
+		
+		Matrix[] read = null;
+		
+		Scanner input = new Scanner(System.in);
+		while(true) {
+			try {
+				System.out.println("Input a matrix file path; or type 'exit' to exit");
+				String path = input.nextLine();
+				
+				if(path.toLowerCase().startsWith("exit")) {
+					System.exit(0);
+				}
+				
+				read = Matrix.readMatrixes(new File(path));
+				
+				break;
+			}catch(Exception e) { }
+		}
+		
+		input.close();
+		
+		return read;
+		
 	}
 
 	private static void handleErrors() {
